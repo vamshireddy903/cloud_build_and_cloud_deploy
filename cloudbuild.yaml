@@ -1,6 +1,4 @@
 steps:
-
-  # Step 1 - Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build'
     args:
@@ -8,15 +6,11 @@ steps:
       - '-t'
       - 'asia-south1-docker.pkg.dev/vamsi-project-488603/demo-repo/my-app:$SHORT_SHA'
       - '.'
-
-  # Step 2 - Push to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push'
     args:
       - 'push'
       - 'asia-south1-docker.pkg.dev/vamsi-project-488603/demo-repo/my-app:$SHORT_SHA'
-
-  # Step 3 - Deploy to Cloud Run
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'deploy'
     args:
@@ -28,18 +22,7 @@ steps:
       - '--platform=managed'
       - '--allow-unauthenticated'
       - '--port=8080'
-
 images:
   - 'asia-south1-docker.pkg.dev/vamsi-project-488603/demo-repo/my-app:$SHORT_SHA'
-
 options:
   logging: CLOUD_LOGGING_ONLY
-```
-
----
-
-## Image path structure
-```
-asia-south1-docker.pkg.dev / vamsi-project-488603 / demo-repo / my-app : $SHORT_SHA
-        ↑                           ↑                    ↑           ↑         ↑
-      region                   project ID             repo name   app name  git commit tag
