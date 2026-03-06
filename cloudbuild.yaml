@@ -1,3 +1,8 @@
+ignoredFiles:
+  - 'README.md'
+  - '*.md'          # ignore ALL markdown files
+  - 'docs/**'       # ignore docs folder
+
 steps:
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build'
