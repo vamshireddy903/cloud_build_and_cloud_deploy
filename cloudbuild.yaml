@@ -1,33 +1,32 @@
-ignoredFiles:
-  - 'README.md'
-  - '*.md'          # ignore ALL markdown files
-  - 'docs/**'       # ignore docs folder
-
 steps:
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'build'
+  - name: "gcr.io/cloud-builders/docker"
+    id: "build"
     args:
-      - 'build'
-      - '-t'
-      - 'asia-south1-docker.pkg.dev/vamsi-project-488603/demo-repo/my-app:$SHORT_SHA'
-      - '.'
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'push'
+      - "build"
+      - "-t"
+      - "asia-south1-docker.pkg.dev/vamsi-project-488603/demo-repo/my-app:$SHORT_SHA"
+      - "."
+
+  - name: "gcr.io/cloud-builders/docker"
+    id: "push"
     args:
-      - 'push'
-      - 'asia-south1-docker.pkg.dev/vamsi-project-488603/demo-repo/my-app:$SHORT_SHA'
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'deploy'
+      - "push"
+      - "asia-south1-docker.pkg.dev/vamsi-project-488603/demo-repo/my-app:$SHORT_SHA"
+
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: "deploy"
     args:
-      - 'run'
-      - 'deploy'
-      - 'my-app-service'
-      - '--image=asia-south1-docker.pkg.dev/vamsi-project-488603/demo-repo/my-app:$SHORT_SHA'
-      - '--region=asia-south1'
-      - '--platform=managed'
-      - '--allow-unauthenticated'
-      - '--port=8080'
+      - "run"
+      - "deploy"
+      - "my-app-service"
+      - "--image=asia-south1-docker.pkg.dev/vamsi-project-488603/demo-repo/my-app:$SHORT_SHA"
+      - "--region=asia-south1"
+      - "--platform=managed"
+      - "--allow-unauthenticated"
+      - "--port=8080"
+
 images:
-  - 'asia-south1-docker.pkg.dev/vamsi-project-488603/demo-repo/my-app:$SHORT_SHA'
+  - "asia-south1-docker.pkg.dev/vamsi-project-488603/demo-repo/my-app:$SHORT_SHA"
+
 options:
   logging: CLOUD_LOGGING_ONLY
