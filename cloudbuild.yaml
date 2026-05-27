@@ -1,20 +1,35 @@
 steps:
+  # Step 0: Build the Docker Image
   - name: "gcr.io/cloud-builders/docker"
     id: "build"
     args:
       - "build"
       - "-t"
-      - "asia-south1-docker.pkg.dev/project-2c498aad-1833-4bd5-bec/demo-repo/my-app:$SHORT_SHA"
+      - "asia-south1-docker.pkg.dev/$PROJECT_ID/demo-repo/my-app:$SHORT_SHA"
       - "."
 
+  # Step 1: Push to Artifact Registry
   - name: "gcr.io/cloud-builders/docker"
     id: "push"
     args:
       - "push"
-      - "asia-south1-docker.pkg.dev/project-2c498aad-1833-4bd5-bec/demo-repo/my-app:$SHORT_SHA"
+      - "asia-south1-docker.pkg.dev/$PROJECT_ID/demo-repo/my-app:$SHORT_SHA"
+
+  # Step 2: Trigger Google Cloud Deploy
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: "trigger-delivery-pipeline"
+    entrypoint: 'gcloud'
+    args:
+      - 'deploy'
+      - 'releases'
+      - 'create'
+      - 'release-$SHORT_SHA'
+      - '--delivery-pipeline=demo-bvbnycw'  # 👈 Your exact pipeline name added here!
+      - '--region=asia-south1'
+      - '--images=my-app=asia-south1-docker.pkg.dev/$PROJECT_ID/demo-repo/my-app:$SHORT_SHA'
 
 images:
-  - "asia-south1-docker.pkg.dev/project-2c498aad-1833-4bd5-bec/demo-repo/my-app:$SHORT_SHA"
+  - "asia-south1-docker.pkg.dev/$PROJECT_ID/demo-repo/my-app:$SHORT_SHA"
 
 options:
   logging: CLOUD_LOGGING_ONLY
