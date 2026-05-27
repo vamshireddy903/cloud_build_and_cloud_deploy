@@ -4,17 +4,17 @@ steps:
     args:
       - "build"
       - "-t"
-      - "asia-south1-docker.pkg.dev/vamsi-project-488603/demo-repo/my-app:$SHORT_SHA"
+      - "asia-south1-docker.pkg.dev/project-2c498aad-1833-4bd5-bec/demo-repo/my-app:$SHORT_SHA"
       - "."
 
   - name: "gcr.io/cloud-builders/docker"
     id: "push"
     args:
       - "push"
-      - "asia-south1-docker.pkg.dev/vamsi-project-488603/demo-repo/my-app:$SHORT_SHA"
+      - "asia-south1-docker.pkg.dev/project-2c498aad-1833-4bd5-bec/demo-repo/my-app:$SHORT_SHA"
 
 images:
-  - "asia-south1-docker.pkg.dev/vamsi-project-488603/demo-repo/my-app:$SHORT_SHA"
+  - "asia-south1-docker.pkg.dev/project-2c498aad-1833-4bd5-bec/demo-repo/my-app:$SHORT_SHA"
 
 options:
   logging: CLOUD_LOGGING_ONLY
