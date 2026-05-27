@@ -1,3 +1,113 @@
+# Explanation of your original code (step by step)
+# Step 1: Build Image
+
+    - name: "gcr.io/cloud-builders/docker"
+
+This uses Google’s Docker builder inside Cloud Build.
+```
+args:
+  - "build"
+  - "-t"
+  - "asia-south1-docker.pkg.dev/.../my-app:$SHORT_SHA"
+  - "."
+```
+**What happens:**     
+- Builds Docker image from your Dockerfile  
+- Tags it like:
+
+    my-app:abc1234
+     
+$SHORT_SHA = unique Git commit ID
+
+# Step 2: Push Image
+```
+- name: "gcr.io/cloud-builders/docker"
+  id: "push"
+```
+**What happens:**
+- Pushes image to:
+```
+Artifact Registry
+asia-south1-docker.pkg.dev/vamsi-project-488603/demo-repo/my-app
+```
+So image becomes available for deployment.
+
+# images section
+```
+images:
+  - "asia-south1-docker.pkg.dev/..."
+```
+**Purpose:**  
+- Tells Cloud Build:
+
+  “This is the final artifact of this build”
+  
+- Helps tracking + metadata in GCP console
+  
+# options
+```
+options:
+  logging: CLOUD_LOGGING_ONLY
+```
+If you want to store Cloud Build logs in GCS (Google Cloud Storage) instead of Cloud Logging, you need to configure the logsBucket field in your cloudbuild.yaml.
+
+```
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    id: "build"
+    args:
+      - "build"
+      - "-t"
+      - "asia-south1-docker.pkg.dev/vamsi-project-488603/demo-repo/my-app:$SHORT_SHA"
+      - "."
+
+  - name: "gcr.io/cloud-builders/docker"
+    id: "push"
+    args:
+      - "push"
+      - "asia-south1-docker.pkg.dev/vamsi-project-488603/demo-repo/my-app:$SHORT_SHA"
+
+images:
+  - "asia-south1-docker.pkg.dev/vamsi-project-488603/demo-repo/my-app:$SHORT_SHA"
+
+# THIS IS THE KEY PART
+logsBucket: "gs://my-cloudbuild-logs-bucket"
+```
+
+# step1: Make sure to have GCS bucket (if not create)
+
+     gsutil mb -l asia-south1 gs://my-cloudbuild-logs-bucket
+
+# Step 2: Give permissions to Cloud Build service account
+
+Cloud Build uses this service account:
+
+    PROJECT_NUMBER@cloudbuild.gserviceaccount.com
+
+Give bucket access:
+
+**🔐 Required IAM permission**   
+
+✔ Minimum required role:
+
+    roles/storage.objectCreator
+
+✔ Recommended (simpler in most cases):
+
+    roles/storage.objectAdmin
+
+**What each permission does**
+```
+Role	                                               Meaning
+objectCreator	                                 Can write logs (create objects)
+objectAdmin	                                   Can write + delete + manage objects
+```
+
+
+**Meaning:**
+- Store logs only in Cloud Logging  
+- Faster + no local log storage
+  
 If you want to create your own service account and use it with Cloud Build, the service account must have the following permissions.
 
 <img width="887" height="468" alt="image" src="https://github.com/user-attachments/assets/411174f3-a8e2-4af2-a180-25aeaa5c96bb" />
