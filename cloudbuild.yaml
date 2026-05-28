@@ -24,7 +24,7 @@ steps:
       - 'releases'
       - 'create'
       - 'release-$SHORT_SHA'
-      - '--delivery-pipeline=demo-bvbnycw'  # 👈 Your exact pipeline name added here!
+      - '--delivery-pipeline=demo-pipeline'  # 👈 Your exact pipeline name added here!
       - '--region=asia-south1'
       - '--images=my-app=asia-south1-docker.pkg.dev/$PROJECT_ID/demo-repo/my-app:$SHORT_SHA'
 
