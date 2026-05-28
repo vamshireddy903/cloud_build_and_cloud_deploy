@@ -4,3 +4,6 @@ kind: Config
 manifests:
   rawYaml:
     - service.yaml
+
+profiles:
+  - name: dev
